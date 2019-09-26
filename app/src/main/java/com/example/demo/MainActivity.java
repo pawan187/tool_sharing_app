@@ -8,12 +8,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
    // public Fragment home = ( Fragment) findViewById(R.id.home);
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -52,9 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_notifications);
                     notif fragmentthree =new notif();
                     FragmentManager fragmentmanager2 = getSupportFragmentManager();
-
                     FragmentTransaction transaction2 = fragmentmanager2.beginTransaction();
-
                     transaction2.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                     transaction2.replace(R.id.mainframe, fragmentthree).addToBackStack("homepage")
                             .commit();
@@ -72,6 +70,23 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         mTextMessage = findViewById(R.id.message);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        FragmentManager fragmentmanager0 = getSupportFragmentManager();
+        home fragmentone0=new home();
+        FragmentTransaction transaction1 = fragmentmanager0.beginTransaction();
+
+        transaction1.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction1.replace(R.id.mainframe, fragmentone0).addToBackStack("homepage")
+                .commit();
+
     }
 
+    public void onView(View view) {
+        Viewproducts vp = new Viewproducts();
+        FragmentManager fragmentmanager0 = getSupportFragmentManager();
+        FragmentTransaction transaction1 = fragmentmanager0.beginTransaction();
+
+        transaction1.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction1.replace(R.id.mainframe, vp).addToBackStack("homepage")
+                .commit();
+    }
 }
