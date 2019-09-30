@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".dashboard">
@@ -11,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -46,7 +47,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
             <TextView
-                android:id="@+id/contact"
+                android:id="@+id/dob"
                 android:layout_width="289dp"
                 android:layout_height="54dp"
                 android:layout_marginStart="8dp"
@@ -61,7 +62,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/dob2" />
 
             <TextView
-                android:id="@+id/gmail"
+                android:id="@+id/email"
                 android:layout_width="289dp"
                 android:layout_height="54dp"
                 android:layout_marginStart="8dp"
@@ -73,7 +74,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.415"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/contact" />
+                app:layout_constraintTop_toBottomOf="@+id/dob" />
 
             <TextView
                 android:id="@+id/address"
@@ -88,7 +89,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.415"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gmail" />
+                app:layout_constraintTop_toBottomOf="@+id/email" />
 
             <TextView
                 android:id="@+id/pin_number"
@@ -110,15 +111,12 @@
                 android:layout_width="289dp"
                 android:layout_height="54dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="56dp"
+                android:layout_marginTop="28dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:text="pin number"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.462"
+                app:layout_constraintHorizontal_bias="0.358"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ownproducts" />
+                app:layout_constraintTop_toBottomOf="@+id/addproduct" />
 
             <TextView
                 android:id="@+id/dob2"
@@ -152,20 +150,32 @@
 
             <Button
                 android:id="@+id/ownproducts"
-                android:layout_width="278dp"
-                android:layout_height="63dp"
+                android:layout_width="258dp"
+                android:layout_height="59dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="64dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                android:onClick="onView"
                 android:text="view own products"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.418"
+                app:layout_constraintHorizontal_bias="0.394"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pin_number"
-                android:onClick="onView" />
+                app:layout_constraintTop_toBottomOf="@+id/pin_number" />
 
-        </android.support.constraint.ConstraintLayout>
+            <Button
+                android:id="@+id/addproduct"
+                android:layout_width="264dp"
+                android:layout_height="53dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                android:onClick="Addproduct"
+                android:text="add a product"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.412"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ownproducts" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </FrameLayout>

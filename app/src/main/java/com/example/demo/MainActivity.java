@@ -1,19 +1,23 @@
 package com.example.demo;
 
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView mTextMessage;
-   // public Fragment home = ( Fragment) findViewById(R.id.home);
+//    private TextView mTextMessage;
+//    public Fragment home = findViewById(R.id.home);
+    private DatabaseReference mDatabase;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -22,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+//                    mTextMessage.setText(R.string.title_home);
                     /*home frag = new home();
                     FragmentManager manager = getSupportFragmentManager();
                     FragmentTransaction transaction = manager.beginTransaction();
@@ -37,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+//                    mTextMessage.setText(R.string.title_dashboard);
                     dashboard fragmenttwo =new dashboard();
                     FragmentManager fragmentmanager1 = getSupportFragmentManager();
 
@@ -49,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+//                    mTextMessage.setText(R.string.title_notifications);
                     notif fragmentthree =new notif();
                     FragmentManager fragmentmanager2 = getSupportFragmentManager();
                     FragmentTransaction transaction2 = fragmentmanager2.beginTransaction();
@@ -62,13 +66,17 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+    private String userid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle b = getIntent().getExtras();
+        userid = b.getString("userid");
+        Log.i("useid ",userid);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        mTextMessage = findViewById(R.id.message);
+//        mTextMessage = findViewById(R.id.message);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         FragmentManager fragmentmanager0 = getSupportFragmentManager();
         home fragmentone0=new home();
@@ -77,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         transaction1.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction1.replace(R.id.mainframe, fragmentone0).addToBackStack("homepage")
                 .commit();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
     }
 
@@ -89,4 +98,24 @@ public class MainActivity extends AppCompatActivity {
         transaction1.replace(R.id.mainframe, vp).addToBackStack("homepage")
                 .commit();
     }
+    public void Addproduct(View view){
+        Addproduct vp = new Addproduct();
+        FragmentManager fragmentmanager0 = getSupportFragmentManager();
+        FragmentTransaction transaction1 = fragmentmanager0.beginTransaction();
+
+        transaction1.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction1.replace(R.id.mainframe, vp).addToBackStack("homepage")
+                .commit();
+
+    }
+    public void OnViewReqeust(){
+        Viewrequest vp = new Viewrequest();
+        FragmentManager fragmentmanager0 = getSupportFragmentManager();
+        FragmentTransaction transaction1 = fragmentmanager0.beginTransaction();
+
+        transaction1.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction1.replace(R.id.mainframe, vp).addToBackStack("homepage")
+                .commit();
+    }
+
 }

@@ -13,6 +13,9 @@ public class item {
         this.owner_id = ownid;
         this.available = avail;
     }
+    public item(){
+
+    }
     public void setId(int id){
         this.id = id;
     }
