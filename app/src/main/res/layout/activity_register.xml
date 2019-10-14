@@ -11,7 +11,7 @@
     tools:context=".RegisterActivity">
 
     <EditText
-        android:id="@+id/Fullaname"
+        android:id="@+id/full_name"
         android:layout_width="315dp"
         android:layout_height="39dp"
         android:layout_marginStart="8dp"
@@ -38,7 +38,7 @@
     <EditText
         android:id="@+id/confirmPassword"
         android:layout_width="314dp"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
@@ -53,7 +53,7 @@
     <EditText
         android:id="@+id/password"
         android:layout_width="314dp"
-        android:layout_height="46dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
@@ -68,7 +68,7 @@
     <EditText
         android:id="@+id/email"
         android:layout_width="314dp"
-        android:layout_height="46dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -80,16 +80,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.506"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Fullaname" />
+        app:layout_constraintTop_toBottomOf="@+id/full_name" />
 
     <Button
         android:id="@+id/profile_pic"
         android:layout_width="315dp"
-        android:layout_height="47dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+
+        android:background = "@color/colorPrimary"
         android:layout_marginRight="8dp"
         android:text="add a profile pic"
         app:layout_constraintEnd_toEndOf="parent"
@@ -99,7 +101,7 @@
     <EditText
         android:id="@+id/phone"
         android:layout_width="311dp"
-        android:layout_height="47dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="20dp"
@@ -116,7 +118,7 @@
     <EditText
         android:id="@+id/dob"
         android:layout_width="309dp"
-        android:layout_height="38dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="20dp"
@@ -133,7 +135,7 @@
     <EditText
         android:id="@+id/address"
         android:layout_width="310dp"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="20dp"
@@ -175,6 +177,7 @@
         android:layout_marginRight="8dp"
         android:onClick="onLogin"
         android:text="Sing up"
+        android:background = "@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.464"
         app:layout_constraintStart_toStartOf="parent"

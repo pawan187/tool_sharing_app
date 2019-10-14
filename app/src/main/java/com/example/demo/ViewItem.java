@@ -7,47 +7,59 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
+import com.squareup.picasso.Picasso;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link home.OnFragmentInteractionListener} interface
+ * {@link ViewItem.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link home#newInstance} factory method to
+ * Use the {@link ViewItem#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class home extends Fragment {
+public class ViewItem extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static item item;
+    private String title,availibilty,pin,description,url;
 
+    private TextView Title,Availibilty,Pin,Description;
+    private Button btn;
+    private ImageView Image;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private DatabaseReference reference;
-    private ListView listView;
-    private ItemAdapter ItemAdapter;
-    private OnFragmentInteractionListener mListener;
 
     private FirebaseUser user;
-    public home() {
+    private DatabaseReference reference;
+    private OnFragmentInteractionListener mListener;
+
+    public static com.example.demo.item getItem() {
+        return item;
+    }
+
+    public static void setItem(item item) {
+        ViewItem.item = item;
+    }
+
+    public ViewItem() {
         // Required empty public constructor
     }
 
@@ -57,11 +69,11 @@ public class home extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment home.
+     * @return A new instance of fragment ViewItem.
      */
     // TODO: Rename and change types and number of parameters
-    public static home newInstance(String param1, String param2) {
-        home fragment = new home();
+    public static ViewItem newInstance(String param1, String param2) {
+        ViewItem fragment = new ViewItem();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -76,44 +88,36 @@ public class home extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        reference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://share-o-72f35.firebaseio.com/");
-        user = FirebaseAuth.getInstance().getCurrentUser();
-    }
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference("notifications").push();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        final RecyclerView recyclerView = view.findViewById(R.id.my_home_recycler);
+        return inflater.inflate(R.layout.fragment_view_item, container, false);
+    }
 
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
-        final ArrayList requests = new ArrayList<item>();
-        ValueEventListener eventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    item item = ds.getValue(item.class);
-                    Log.d("TAG",ds.getKey()+" user id"+ user.getUid());
-                    item.setId(ds.getKey());
-                    if(!user.getUid().equals(item.getOwner_id())){
-                        requests.add(item);
-                    }
-                }
-                recyclerView.setAdapter(new ItemAdapter(getContext(),requests));
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.i("item: ",item.getImage_title()+" item_id"+item.getId());
+        Description = view.findViewById(R.id.description);
+        Pin = view.findViewById(R.id.pin);
+        Image = view.findViewById(R.id.productimage);
+        Title = view.findViewById(R.id.title);
+        Availibilty = view.findViewById(R.id.availibility);
+        btn = view.findViewById(R.id.add);
+        btn.setOnClickListener(this);
 
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        Description.setText("Description:"+item.getDescription());
+        Pin.setText("Pin"+item.getPin());
+        Title.setText("Title: "+item.getImage_title());
+        Availibilty.setText("Availibilty: "+item.getAvailable());
+        Picasso.with(getContext()).load(item.getImage_url()).into(Image);
 
-            }
-        };
-//        reference.child("items").orderByChild("owner_id").equalTo(user.getUid()).addListenerForSingleValueEvent(eventListener);
-
-        reference.child("items").addListenerForSingleValueEvent(eventListener);
-
-        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -135,6 +139,18 @@ public class home extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        notification nt = new notification(user.getUid(),item.getOwner_id(), item.getId(),item.getImage_title(),"request","pending");
+        Log.i("notificatoin product id",nt.getProductId());
+        reference.setValue(nt);
+        AppCompatActivity activity = (AppCompatActivity) view.getContext();
+        home myFragment = new home();
+        activity.getSupportFragmentManager().beginTransaction().replace(R.id.mainframe, myFragment).addToBackStack("homepage").commit();
+        Toast.makeText(getContext(),"request made successfully!",Toast.LENGTH_SHORT).show();;
     }
 
     /**

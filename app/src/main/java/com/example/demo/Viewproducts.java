@@ -3,10 +3,24 @@ package com.example.demo;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 
 /**
@@ -28,6 +42,10 @@ public class Viewproducts extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private ItemAdapter ItemAdapter;
+
+    private FirebaseUser user;
+    private DatabaseReference reference;
 
     public Viewproducts() {
         // Required empty public constructor
@@ -58,13 +76,44 @@ public class Viewproducts extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference("items");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_viewproducts, container, false);
+        View view = inflater.inflate(R.layout.fragment_viewproducts, container, false);
+        final RecyclerView recyclerView = view.findViewById(R.id.my_viewproduct_recycler);
+
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+        final ArrayList requests = new ArrayList<item>();
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    item item = ds.getValue(item.class);
+                    Log.d("TAG", item.getOwner_id()+" "+ user.getUid());
+                    requests.add(item);
+
+                }
+                recyclerView.setAdapter(new ItemAdapter(getContext(),requests));
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        reference.orderByChild("owner_id").equalTo(user.getUid()).addValueEventListener(eventListener);
+//        requests.add(new item("1","book","https://thumbs-prod.si-cdn.com/ufPRE9RHUDHqQdOsLvYHhJAxy1k=/fit-in/1600x0/https://public-media.si-cdn.com/filer/91/91/91910c23-cae4-46f8-b7c9-e2b22b8c1710/lostbook.jpg"));
+//        requests.add(new item("2","pen","abc.com"));
+//        requests.add(new item("7","cycle","7"));
+//        requests.add(new item("8","bike","8"));
+//        Log.d("items:",String.valueOf(requests));
+//        recyclerView.setAdapter(new ItemAdapter(getContext(),requests));
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

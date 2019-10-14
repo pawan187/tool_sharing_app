@@ -17,17 +17,14 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/profile"
                 android:layout_width="200dp"
                 android:layout_height="177dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:src="@android:drawable/ic_menu_add"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.451"
+                app:layout_constraintHorizontal_bias="0.446"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,73 +33,37 @@
                 android:layout_width="283dp"
                 android:layout_height="51dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="56dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:text="Full name"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.394"
+                app:layout_constraintHorizontal_bias="0.339"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
-            <TextView
-                android:id="@+id/dob"
-                android:layout_width="289dp"
-                android:layout_height="54dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:text="contact"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.415"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dob2" />
-
-            <TextView
-                android:id="@+id/email"
-                android:layout_width="289dp"
-                android:layout_height="54dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:text="gmail"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.415"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dob" />
+                app:layout_constraintTop_toBottomOf="@+id/profile" />
 
             <TextView
                 android:id="@+id/address"
                 android:layout_width="289dp"
                 android:layout_height="54dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:text="address"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.415"
+                app:layout_constraintHorizontal_bias="0.358"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/email" />
+                app:layout_constraintTop_toBottomOf="@+id/dob2" />
 
             <TextView
                 android:id="@+id/pin_number"
                 android:layout_width="289dp"
                 android:layout_height="54dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:text="pin number"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.415"
+                app:layout_constraintHorizontal_bias="0.358"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/address" />
 
@@ -111,10 +72,10 @@
                 android:layout_width="289dp"
                 android:layout_height="54dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="64dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.358"
+                app:layout_constraintHorizontal_bias="0.452"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/addproduct" />
 
@@ -123,13 +84,11 @@
                 android:layout_width="289dp"
                 android:layout_height="54dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:text="date of birth"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.415"
+                app:layout_constraintHorizontal_bias="0.358"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/contact2" />
 
@@ -138,13 +97,12 @@
                 android:layout_width="289dp"
                 android:layout_height="54dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                android:inputType="textPhonetic"
                 android:text="contact"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.415"
+                app:layout_constraintHorizontal_bias="0.358"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fullName" />
 
@@ -153,10 +111,12 @@
                 android:layout_width="258dp"
                 android:layout_height="59dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="44dp"
                 android:layout_marginEnd="8dp"
                 android:onClick="onView"
                 android:text="view own products"
+
+                android:background = "@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.394"
                 app:layout_constraintStart_toStartOf="parent"
@@ -167,12 +127,14 @@
                 android:layout_width="264dp"
                 android:layout_height="53dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="68dp"
                 android:layout_marginEnd="8dp"
                 android:onClick="Addproduct"
+
+                android:background = "@color/colorPrimary"
                 android:text="add a product"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.412"
+                app:layout_constraintHorizontal_bias="0.366"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ownproducts" />
 

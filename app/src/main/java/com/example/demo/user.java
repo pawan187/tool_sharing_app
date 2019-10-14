@@ -1,7 +1,7 @@
 package com.example.demo;
 
 public class user {
-    private int id;
+    private String  id;
     private String username;
     private String pic_url;
     private String dob;
@@ -13,7 +13,7 @@ public class user {
     public user(){
 
     }
-    public user( int id, String username, String pic_url, String dob, long contact, String email, long pin, String address){
+    public user( String id, String username, String pic_url, String dob, long contact, long pin, String address){
         this.id  =id;
         this.username = username;
         this.pic_url = pic_url;
@@ -28,7 +28,7 @@ public class user {
         return username;
     }
 
-    public int getId() {
+    public String  getId() {
         return id;
     }
 
@@ -76,7 +76,7 @@ public class user {
         this.email = email;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

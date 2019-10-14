@@ -6,8 +6,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -23,17 +31,26 @@ public class Addproduct extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private EditText pin;
+    private ImageView itemImage;
+    private EditText title;
+    private EditText desciption;
+    private EditText imgPath;
+    private EditText availability;
+    private Button btnforPic;
+    private Button btnforAdd;
+
 
     private OnFragmentInteractionListener mListener;
+    private FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
 
+    private DatabaseReference mDatabase;
     public Addproduct() {
         // Required empty public constructor
     }
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -59,12 +76,21 @@ public class Addproduct extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-    }
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("items");
 
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+//        pin = pin.findViewById(R.id.pin);
+//        itemImage = itemImage.findViewById(R.id.item_image);
+//        title= title.findViewById(R.id.title);
+//        desciption = desciption.findViewById(R.id.description);
+//        imgPath = imgPath.findViewById(R.id.imgpath);
+//        availability = availability.findViewById(R.id.availibility);
+//        btnforPic = btnforPic.findViewById(R.id.productimage);
+//        btnforAdd = btnforAdd.findViewById(R.id.add);
         return inflater.inflate(R.layout.fragment_addproduct, container, false);
     }
 

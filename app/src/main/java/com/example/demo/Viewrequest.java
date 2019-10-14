@@ -3,11 +3,27 @@ package com.example.demo;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,8 +43,16 @@ public class Viewrequest extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private TextView ownername,status;
+    private TextView requestby;
+    private ImageView itemImg;
+    private Button Accept,Reject;
 
+    private OnFragmentInteractionListener mListener;
+    private FirebaseUser user;
+
+    private DatabaseReference reference;
+    private FirebaseDatabase mDatabase;
     public Viewrequest() {
         // Required empty public constructor
     }
@@ -67,6 +91,60 @@ public class Viewrequest extends Fragment {
         return inflater.inflate(R.layout.fragment_viewrequest, container, false);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference("notifications");
+
+        ownername = view.findViewById(R.id.ownerName);
+        requestby = view.findViewById(R.id.requestby);
+        status = view.findViewById(R.id.status);
+
+        Accept = view.findViewById(R.id.accept);
+        Accept.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                notification not = new notification(user.getUid(),nt.getUserId(), nt.getProductId(),nt.getProductname(),"response","Accepted");
+                Log.i("notificatoin product id",nt.getProductId());
+                reference.setValue(not);
+                AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                home myFragment = new home();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.mainframe, myFragment).addToBackStack("homepage").commit();
+                Toast.makeText(getContext(),"request Accepted",Toast.LENGTH_SHORT).show();;
+
+            }
+        });
+
+        Reject = view.findViewById(R.id.accept);
+        Accept.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                notification not = new notification(user.getUid(),nt.getUserId(), nt.getProductId(),nt.getProductname(),"response","Rejected");
+//                Log.i("notificatoin product id",nt.getProductId());
+                reference.setValue(not);
+                Map<String, Object> userUpdates = new HashMap<>();
+                userUpdates.put(nt.getId()+"/"+nt.getStatus(), "Rejected");
+                reference.updateChildren(userUpdates);
+                AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                home myFragment = new home();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.mainframe, myFragment).addToBackStack("homepage").commit();
+                Toast.makeText(getContext(),"request rejected",Toast.LENGTH_SHORT).show();;
+
+            }
+        });
+//        Log.i("product Id: ",nt.getProductId());
+        ownername.setText("Title: " + nt.getProductname());
+        requestby.setText("Request By"+nt.getUserId());
+        if(nt.getType().equals("response") || nt.getType().equals("request") && !nt.getStatus().equals("pending")){
+            Accept.setVisibility(view.GONE);
+            Reject.setVisibility(view.GONE);
+            status.setText("request have been:"+nt.getStatus());
+        }
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -79,9 +157,6 @@ public class Viewrequest extends Fragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -91,16 +166,17 @@ public class Viewrequest extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    private notification nt;
+    public void setNotif(notification nt) {
+        this.nt = nt;
+    }
+
+    public void onReject(View view){
+
+    }
+    public void onAccept(View view){
+
+    }
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

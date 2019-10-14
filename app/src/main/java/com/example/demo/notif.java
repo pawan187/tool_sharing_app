@@ -7,12 +7,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 /**
@@ -33,7 +41,8 @@ public class notif extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
+    private DatabaseReference reference;
+    private FirebaseUser User;
     public notif() {
         // Required empty public constructor
     }
@@ -63,7 +72,8 @@ public class notif extends Fragment {
                 mParam1 = getArguments().getString(ARG_PARAM1);
                 mParam2 = getArguments().getString(ARG_PARAM2);
             }
-
+        reference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://share-o-72f35.firebaseio.com/");
+            User = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @Override
@@ -72,12 +82,32 @@ public class notif extends Fragment {
         // Inflate the layout for this fragment
 //        notif context;
         View view = inflater.inflate(R.layout.fragment_notif, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
+        final RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        ArrayList requests = new ArrayList<notification>(Arrays.asList(new notification("naresh", "pawan", "pen")));
-        requests.add(new notification("naresh", "pawan", "pen"));
-        requests.add(new notification("naresh", "pawan", "pen"));
-        recyclerView.setAdapter(new CustomAdapter(getContext(),requests));
+        final ArrayList requests = new ArrayList<notification>();
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                    notification nt = ds.getValue(notification.class);
+                    nt.setId(ds.getKey());
+//                    Log.i("notificaton id",nt.getId());
+                    if(nt!=null){
+                        if(nt.getOwnerId().equals(User.getUid())){
+                            requests.add(nt);
+                        }
+                    }
+                }
+                recyclerView.setAdapter(new CustomAdapter(getContext(),requests));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        reference.child("notifications").addValueEventListener(eventListener);
+
         return view;
 //        return inflater.inflate(R.layout.fragment_notif, container, false);
     }

@@ -3,11 +3,25 @@ package com.example.demo;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 
 /**
@@ -19,16 +33,25 @@ import androidx.fragment.app.Fragment;
  * create an instance of this fragment.
  */
 public class dashboard extends Fragment {
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private TextView Full_name ;
+    private TextView Contact;
+    private TextView Dob;
+    private ImageView ProfilePic;
+    private TextView pin;
+    private TextView address;
+    private ImageView Profile;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private String userid;
     private OnFragmentInteractionListener mListener;
+//    final FirebaseDatabase reference;
+    private DatabaseReference reference;
+    private user User;
 
     public dashboard() {
         // Required empty public constructor
@@ -65,8 +88,42 @@ public class dashboard extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dashboard, container, false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Contact =(TextView) view.findViewById(R.id.contact2);
+        Dob = (TextView) view.findViewById(R.id.dob2);
+        Full_name = view.findViewById(R.id.fullName);
+        address = view.findViewById(R.id.address);
+        pin = view.findViewById(R.id.pin_number);
+        Profile = view.findViewById(R.id.profile);
+        final FirebaseUser user = mAuth.getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://share-o-72f35.firebaseio.com/user");
+        reference.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User = dataSnapshot.getValue(user.class);
+                Log.i("userid", user.getUid()+"profile pic:"+User.getPic_url() + User.getUsername() + User.getAddress() + User.getDob());
+
+                Picasso.with(getContext()).load(User.getPic_url()).into(Profile);
+                Full_name.setText("Full name: " + User.getUsername());
+                Contact.setText("Conctact: "+User.getContact());
+                Dob.setText("DOB: "+User.getDob());
+                address.setText("Address: " + User.getAddress());
+                pin.setText("Pin: "+User.getPin());
+//          }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.i("error","while retriving data");
+            }
+        });
+//        Full_name.setText("Full name: "+User.getUsername());
     }
 
     // TODO: Rename method, update argument and hook method into UI event
