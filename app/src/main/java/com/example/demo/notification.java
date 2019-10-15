@@ -18,11 +18,11 @@ public class notification {
         this.id = id;
     }
 
-    public notification(String un, String on, String productId, String pn, String type, String status){
-        this.OwnerId = on;
+    public notification(String userId, String ownerId, String productId, String productname, String type, String status){
+        this.OwnerId = ownerId;
         this.productId = productId;
-        this.productname = pn;
-        this.userId = un;
+        this.productname = productname;
+        this.userId = userId;
         this.type = type;
         this.status = status;
     }

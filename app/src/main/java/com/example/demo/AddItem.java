@@ -1,13 +1,17 @@
 package com.example.demo;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
@@ -31,7 +36,7 @@ public class AddItem extends AppCompatActivity {
     private FirebaseUser user;
     private DatabaseReference mDatabase;
     private StorageReference reference;
-
+    private ProgressBar mProgress;
     private TextView pin;
     private ImageView itemImage;
     private TextView description ;
@@ -52,6 +57,8 @@ public class AddItem extends AppCompatActivity {
         description = findViewById(R.id.description);
         title = findViewById(R.id.title);
         availability = findViewById(R.id.availibility);
+
+        mProgress = findViewById(R.id.progressBar2);
     }
     public void addItem(final View view){
 
@@ -60,6 +67,27 @@ public class AddItem extends AppCompatActivity {
         Title = title.getText().toString();
 //        UserId = mAuth.getUid();
         Availabilty = availability.getText().toString();
+
+        if(targetUri==null){
+            Toast.makeText(getApplicationContext(), "Please select an image", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (TextUtils.isEmpty(Title)) {
+            Toast.makeText(getApplicationContext(), "Please enter Title", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (TextUtils.isEmpty(Description)) {
+            Toast.makeText(getApplicationContext(), "Please enter Description", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (TextUtils.isEmpty(Availabilty)) {
+            Toast.makeText(getApplicationContext(), "Please enter Availability", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (TextUtils.isEmpty(Pin)) {
+            Toast.makeText(getApplicationContext(), "Please enter Pin", Toast.LENGTH_LONG).show();
+            return;
+        }
         final item item = new item(Title,"",user.getUid(),Availabilty , Pin , Description);
 
         StorageReference ref = reference.child("itemsPic").child(targetUri.getLastPathSegment());
@@ -71,13 +99,28 @@ public class AddItem extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         item.setImage_url(uri.toString());
+
                         mDatabase.setValue(item);
 
+                        mProgress.setVisibility(View.GONE);
                         Intent intent = new Intent(AddItem.this,MainActivity.class);
                         startActivity(intent);
                         Toast.makeText(getApplicationContext(),"item uploaded successfully!",Toast.LENGTH_SHORT).show();
                     }
                 });
+
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @TargetApi(Build.VERSION_CODES.N)
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                //calculating progress percentage
+                @SuppressWarnings("VisibleForTests")
+                Double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+
+                //displaying percentage in progress dialog
+                mProgress.setVisibility(View.VISIBLE);
+                mProgress.setProgress((int) Math.ceil(progress),true);
 
             }
         });
@@ -101,7 +144,7 @@ public class AddItem extends AppCompatActivity {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), targetUri);
 //                targetImage.setImageBitmap(bitmap);
-
+                itemImage.setVisibility(View.VISIBLE);
                 Picasso.with(getApplicationContext()).load(targetUri.toString()).into(itemImage);
                 Log.i("targetFile: ",targetUri.getPath());
             }

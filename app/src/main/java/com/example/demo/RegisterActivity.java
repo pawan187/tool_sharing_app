@@ -1,18 +1,19 @@
 package com.example.demo;
 
-import android.content.ContentResolver;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +31,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -52,6 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private StorageReference mStorageRef;    /// storage reference
     private Uri targetUri ;
+    private byte[] image;
     private String url;
     private Bitmap bitmap;
     @Override
@@ -70,9 +72,9 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View arg0) {
                 // TODO Auto-generated method stubIntent intent = new Intent();
-                Intent intent = new Intent();
+                Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
+//                intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
             }});
         btn.setOnClickListener(new View.OnClickListener() {
@@ -88,9 +90,10 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mAuth = FirebaseAuth.getInstance();
     }
-    public void onRegister(View view) {
+    public void onRegister(final View view) {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         Fullaname = findViewById(R.id.full_name);
@@ -98,18 +101,31 @@ public class RegisterActivity extends AppCompatActivity {
         dob=findViewById(R.id.dob);
         address = findViewById(R.id.address);
         pin = findViewById(R.id.pin);
-
+        TextView confirm = findViewById(R.id.confirmPassword);
+        String confirmPassword = confirm.getText().toString();
         final String Email,Password,fullname,Dob,Address;
 //        final String[] downloadurl = new String[1];
         final Long Phone,Pin;
 
+        final ProgressBar mProgress;
+        mProgress = findViewById(R.id.progressBar);
+
         fullname = Fullaname.getText().toString();
         Dob = dob.getText().toString();
         Address = address.getText().toString();
-        Phone = Long.parseLong(phone.getText().toString());
-        Pin = Long.parseLong(pin.getText().toString());
+
         Email = email.getText().toString();
         Password = password.getText().toString();
+        if (targetUri==null) {
+            Toast.makeText(getApplicationContext(), "Please enter select an image" +
+                    "", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(fullname)) {
+            Toast.makeText(getApplicationContext(), "Please enter Full name", Toast.LENGTH_LONG).show();
+            return;
+        }
         if (TextUtils.isEmpty(Email)) {
             Toast.makeText(getApplicationContext(), "Please enter email...", Toast.LENGTH_LONG).show();
             return;
@@ -118,19 +134,42 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Please enter password!", Toast.LENGTH_LONG).show();
             return;
         }
-
+        if (TextUtils.isEmpty(confirmPassword)) {
+            Toast.makeText(getApplicationContext(), "Please enter confirm password!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        try {
+            Phone = Long.parseLong(phone.getText().toString());
+            Pin = Long.parseLong(pin.getText().toString());
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), "Please enter PIN and Phone", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (TextUtils.isEmpty(Address)) {
+            Toast.makeText(getApplicationContext(), "Please enter Address!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (TextUtils.isEmpty(Dob)) {
+            Toast.makeText(getApplicationContext(), "Please enter dob", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!Password.equals(confirmPassword)) {
+            Toast.makeText(getApplicationContext(), "Passwords doesnt matches", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         mAuth.createUserWithEmailAndPassword(Email, Password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        mProgress.setProgress(View.GONE);
                         if (task.isSuccessful()) {
                             if (targetUri != null) {
                                 StorageReference filepath = mStorageRef.child("profilePic").child(targetUri.getLastPathSegment());
-                                filepath.putFile(targetUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                filepath.putBytes(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        //                        Uri downloadUri = taskSnapshot.getDownloadUrl();
                                         Task<Uri> result = taskSnapshot.getStorage().getDownloadUrl();
                                         result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                             @Override
@@ -154,22 +193,23 @@ public class RegisterActivity extends AppCompatActivity {
                                         });
                                     }
                                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                    @TargetApi(Build.VERSION_CODES.N)
                                     @Override
                                     public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                                         //calculating progress percentage
                                         @SuppressWarnings("VisibleForTests")
-                                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                        Double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
 
-//                        //displaying percentage in progress dialog
-//                        mProgress.setMessage("Uploading " + ((int) progress) + "%...");
-//                        mProgress.show();
+                        //displaying percentage in progress dialog
+                                        mProgress.setVisibility(View.VISIBLE);
+                                        mProgress.setProgress((int) Math.ceil(progress),true);
+
                                     }
                                 });
                             }
                         }
                         else {
                             Toast.makeText(getApplicationContext(), "Registration failed! Please try again later", Toast.LENGTH_LONG).show();
-//                            progressBar.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -186,10 +226,12 @@ public class RegisterActivity extends AppCompatActivity {
             targetUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), targetUri);
-//                targetImage.setImageBitmap(bitmap);
-
-                Picasso.with(getApplicationContext()).load(targetUri.toString()).into(targetImage);
-                Log.i("targetFile: ",targetUri.getPath());
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 10, baos);
+                image = baos.toByteArray();
+                targetImage.setVisibility(View.VISIBLE);
+                targetImage.setImageBitmap(bitmap);
+                textTargetUri.setText(targetUri.getPath());
             }
             catch (IOException e)
             {
@@ -197,10 +239,4 @@ public class RegisterActivity extends AppCompatActivity {
             }
         }
     }
-    public String getFileExtension(Uri uri ){
-        ContentResolver cr = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cr.getType(uri));
-    }
-
 }

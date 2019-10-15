@@ -46,7 +46,7 @@ class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.MyViewHolder> {
             @Override
             public void onClick(View view) {
                 // display a toast with person name on item click
-                Toast.makeText(context, String.valueOf(position)+"element selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, requests.get(position).getImage_title()+" selected", Toast.LENGTH_SHORT).show();
 //                Intent intent = new Intent(context,ViewProduct.class);
 //                context.startActivity(intent);
                 AppCompatActivity activity = (AppCompatActivity) view.getContext();

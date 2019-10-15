@@ -73,6 +73,7 @@ public class notif extends Fragment {
                 mParam2 = getArguments().getString(ARG_PARAM2);
             }
         reference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://share-o-72f35.firebaseio.com/");
+            
             User = FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -93,7 +94,7 @@ public class notif extends Fragment {
                     nt.setId(ds.getKey());
 //                    Log.i("notificaton id",nt.getId());
                     if(nt!=null){
-                        if(nt.getOwnerId().equals(User.getUid())){
+                        if(User.getUid().equals(nt.getOwnerId())){
                             requests.add(nt);
                         }
                     }

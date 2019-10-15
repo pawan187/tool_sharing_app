@@ -34,13 +34,11 @@ class CustomAdapter extends RecyclerView.Adapter <CustomAdapter.MyViewHolder>{
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int i) {
         final notification nt = requests.get(i);
         myViewHolder.productname.setText(String.valueOf(nt.getProductname()));
-//    Log.i("notification id", nt.getId());
+        myViewHolder.status.setText(String.valueOf(nt.getType()));
         myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // display a toast with person name on item click
-                Toast.makeText(context, String.valueOf(i)+"element selected", Toast.LENGTH_SHORT).show();
-//                Log.i("notification",nt.getId());
+                Toast.makeText(context, nt.getProductname()+" selected", Toast.LENGTH_SHORT).show();
                 AppCompatActivity activity = (AppCompatActivity) view.getContext();
                 Viewrequest myFragment = new Viewrequest();
                 myFragment.setNotif(nt);
@@ -57,13 +55,14 @@ class CustomAdapter extends RecyclerView.Adapter <CustomAdapter.MyViewHolder>{
 //        TextView username;// init the item view's
         TextView ownername;// init the item view's
         TextView productname;// init the item view's
-
+        TextView status;
         public MyViewHolder(View itemView) {
             super(itemView);
             // get the reference of item view's
 //            username = (TextView) itemView.findViewById(R.id.username);
 //            ownername = (TextView) itemView.findViewById(R.id.ownername);
             productname = (TextView) itemView.findViewById(R.id.productname);
+            status = (TextView) itemView.findViewById(R.id.type);
         }
     }
 }

@@ -87,6 +87,7 @@ private FirebaseUser user;
         transaction1.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction1.replace(R.id.mainframe, fragmentone0).addToBackStack("homepage")
                 .commit();
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();

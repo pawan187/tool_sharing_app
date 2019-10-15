@@ -19,11 +19,12 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -95,7 +96,21 @@ public class Viewrequest extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference("notifications");
+        reference = FirebaseDatabase.getInstance().getReference("notifications").push();
+        itemImg = view.findViewById(R.id.imgItem);
+        DatabaseReference re = FirebaseDatabase.getInstance().getReferenceFromUrl("https://share-o-72f35.firebaseio.com/items");
+        re.child(nt.getProductId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                item item = dataSnapshot.getValue(item.class);
+                Log.i("item pic url",item.getImage_url());
+                Picasso.with(getContext()).load(item.getImage_url()).into(itemImg);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.i("error","while retriving data");
+            }
+        });
 
         ownername = view.findViewById(R.id.ownerName);
         requestby = view.findViewById(R.id.requestby);
@@ -109,25 +124,35 @@ public class Viewrequest extends Fragment {
                 notification not = new notification(user.getUid(),nt.getUserId(), nt.getProductId(),nt.getProductname(),"response","Accepted");
                 Log.i("notificatoin product id",nt.getProductId());
                 reference.setValue(not);
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("notifications");
+                ref.child(nt.getId()).child("status").setValue("Accepted");
+                nt.setStatus("Accepted");
+
                 AppCompatActivity activity = (AppCompatActivity) view.getContext();
                 home myFragment = new home();
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.mainframe, myFragment).addToBackStack("homepage").commit();
-                Toast.makeText(getContext(),"request Accepted",Toast.LENGTH_SHORT).show();;
+                Toast.makeText(getContext(),"request Accepted",Toast.LENGTH_SHORT).show();
 
             }
         });
 
-        Reject = view.findViewById(R.id.accept);
-        Accept.setOnClickListener(new View.OnClickListener(){
+        Reject = view.findViewById(R.id.reject);
+        Reject.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
                 notification not = new notification(user.getUid(),nt.getUserId(), nt.getProductId(),nt.getProductname(),"response","Rejected");
 //                Log.i("notificatoin product id",nt.getProductId());
                 reference.setValue(not);
-                Map<String, Object> userUpdates = new HashMap<>();
-                userUpdates.put(nt.getId()+"/"+nt.getStatus(), "Rejected");
-                reference.updateChildren(userUpdates);
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("notifications");
+
+                ref.child(nt.getId()).child("status").setValue("Rejected");
+
+
+                nt.setStatus("Rejected");
+
                 AppCompatActivity activity = (AppCompatActivity) view.getContext();
                 home myFragment = new home();
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.mainframe, myFragment).addToBackStack("homepage").commit();
@@ -141,6 +166,7 @@ public class Viewrequest extends Fragment {
         if(nt.getType().equals("response") || nt.getType().equals("request") && !nt.getStatus().equals("pending")){
             Accept.setVisibility(view.GONE);
             Reject.setVisibility(view.GONE);
+            status.setVisibility(View.VISIBLE);
             status.setText("request have been:"+nt.getStatus());
         }
     }

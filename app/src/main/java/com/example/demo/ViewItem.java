@@ -112,6 +112,9 @@ public class ViewItem extends Fragment implements View.OnClickListener {
         btn = view.findViewById(R.id.add);
         btn.setOnClickListener(this);
 
+        if(user.getUid().equals(item.getOwner_id())){
+            btn.setVisibility(View.GONE);
+        }
         Description.setText("Description:"+item.getDescription());
         Pin.setText("Pin"+item.getPin());
         Title.setText("Title: "+item.getImage_title());

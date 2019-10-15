@@ -77,6 +77,7 @@ public class home extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         reference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://share-o-72f35.firebaseio.com/");
+        reference.keepSynced(true);
         user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -89,6 +90,7 @@ public class home extends Fragment {
         final RecyclerView recyclerView = view.findViewById(R.id.my_home_recycler);
 
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+
         final ArrayList requests = new ArrayList<item>();
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
@@ -101,12 +103,12 @@ public class home extends Fragment {
                         requests.add(item);
                     }
                 }
-                recyclerView.setAdapter(new ItemAdapter(getContext(),requests));
 
+                recyclerView.setAdapter(new ItemAdapter(getContext(),requests));
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.i("datat retrival","error"+ databaseError);
             }
         };
 //        reference.child("items").orderByChild("owner_id").equalTo(user.getUid()).addListenerForSingleValueEvent(eventListener);
