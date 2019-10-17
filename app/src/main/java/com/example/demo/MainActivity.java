@@ -1,11 +1,14 @@
 package com.example.demo;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -77,13 +80,12 @@ private FirebaseUser user;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
-//        mTextMessage = findViewById(R.id.message);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         FragmentManager fragmentmanager0 = getSupportFragmentManager();
         home fragmentone0=new home();
         FragmentTransaction transaction1 = fragmentmanager0.beginTransaction();
-
         transaction1.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction1.replace(R.id.mainframe, fragmentone0).addToBackStack("homepage")
                 .commit();
@@ -96,6 +98,30 @@ private FirebaseUser user;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.signout,menu);
+        MenuItem ourSearchItem = menu.findItem(R.id.app_bar_search);
+
+        final SearchView sv = (SearchView) ourSearchItem.getActionView();
+        sv.setQueryHint("search items by pin location");
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Search search = new Search();
+
+                search.setQuery(query);
+                FragmentManager fragmentmanager0 = getSupportFragmentManager();
+                FragmentTransaction transaction1 = fragmentmanager0.beginTransaction();
+                transaction1.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                transaction1.replace(R.id.mainframe, search).addToBackStack("homepage")
+                        .commit();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i("data entered", newText);
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -108,6 +134,16 @@ private FirebaseUser user;
                         finish();
                 Intent intent = new Intent(MainActivity.this,LoginActivity.class);
                 startActivity(intent);
+                Toast.makeText(getApplicationContext(),"sign out successfully!",Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.about:
+                Dialog dialog = new Dialog(MainActivity.this,R.style.Theme_Dialog);
+                dialog.setContentView(R.layout.about);
+                dialog.show();
+//                final View deleteDialogView = findViewById(R.id.about);
+//                final AlertDialog deleteDialog = new AlertDialog.Builder(this).create();
+//                deleteDialog.setView(deleteDialogView);
+//                deleteDialog.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

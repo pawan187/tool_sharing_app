@@ -27,7 +27,18 @@ public class notification {
         this.status = status;
     }
 
-    public notification(String ProductId,String username,String productname){
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+
+    public void setOwnername(String ownername) {
+        Ownername = ownername;
+    }
+
+
+    public notification(String ProductId, String username, String productname){
         this.productId = ProductId;
         this.productname = productname;
         this.OwnerId = username;

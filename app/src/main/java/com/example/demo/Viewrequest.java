@@ -44,10 +44,12 @@ public class Viewrequest extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private TextView ownername,status;
+    private TextView ownername,status,OwnerName,Contact;
     private TextView requestby;
     private ImageView itemImg;
     private Button Accept,Reject;
+
+    private user User;
 
     private OnFragmentInteractionListener mListener;
     private FirebaseUser user;
@@ -112,9 +114,11 @@ public class Viewrequest extends Fragment {
             }
         });
 
-        ownername = view.findViewById(R.id.ownerName);
+        ownername = view.findViewById(R.id.title);
         requestby = view.findViewById(R.id.requestby);
         status = view.findViewById(R.id.status);
+        OwnerName = view.findViewById(R.id.username);
+        Contact = view.findViewById(R.id.Contact);
 
         Accept = view.findViewById(R.id.accept);
         Accept.setOnClickListener(new View.OnClickListener(){
@@ -162,12 +166,40 @@ public class Viewrequest extends Fragment {
         });
 //        Log.i("product Id: ",nt.getProductId());
         ownername.setText("Title: " + nt.getProductname());
-        requestby.setText("Request By"+nt.getUserId());
-        if(nt.getType().equals("response") || nt.getType().equals("request") && !nt.getStatus().equals("pending")){
+        requestby.setText("Type: "+nt.getType());
+        if(nt.getType().equals("response")){
             Accept.setVisibility(view.GONE);
             Reject.setVisibility(view.GONE);
             status.setVisibility(View.VISIBLE);
-            status.setText("request have been:"+nt.getStatus());
+
+            status.setText("Owner has "+nt.getStatus()+" your request!");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("https://share-o-72f35.firebaseio.com/user");
+            ref.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User = dataSnapshot.getValue(user.class);
+                    Log.i("userid", user.getUid());
+
+
+                    OwnerName.setVisibility(View.VISIBLE);
+                    Contact.setVisibility(View.VISIBLE);
+                    OwnerName.setText("Full name: " + User.getUsername());
+                    Contact.setText("Contact: "+ User.getContact());;
+//          }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.i("error","while retriving data");
+                }
+            });
+        }
+        if(nt.getType().equals("request") && !nt.getStatus().equals("pending")) {
+            Accept.setVisibility(view.GONE);
+            Reject.setVisibility(view.GONE);
+            status.setVisibility(View.VISIBLE);
+            status.setText("You have " + nt.getStatus() + " this request!");
+
+
         }
     }
 

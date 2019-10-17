@@ -23,6 +23,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -115,8 +118,16 @@ public class ViewItem extends Fragment implements View.OnClickListener {
         if(user.getUid().equals(item.getOwner_id())){
             btn.setVisibility(View.GONE);
         }
+        if(item.getRequested_by()!=null){
+
+            Log.i("item request by:",item.getRequested_by().get(0));
+            if(item.getRequested_by().contains(user.getUid())){
+                btn.setVisibility(View.GONE);
+                Toast.makeText(getContext(),"item has already been requested!",Toast.LENGTH_LONG).show();
+            }
+        }
         Description.setText("Description:"+item.getDescription());
-        Pin.setText("Pin"+item.getPin());
+        Pin.setText("Pin: "+item.getPin());
         Title.setText("Title: "+item.getImage_title());
         Availibilty.setText("Availibilty: "+item.getAvailable());
         Picasso.with(getContext()).load(item.getImage_url()).into(Image);
@@ -146,10 +157,22 @@ public class ViewItem extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-
         notification nt = new notification(user.getUid(),item.getOwner_id(), item.getId(),item.getImage_title(),"request","pending");
         Log.i("notificatoin product id",nt.getProductId());
         reference.setValue(nt);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("items");
+        List<String> lt;
+        if(item.getRequested_by().isEmpty()){
+            lt = new ArrayList<String>(item.getRequested_by());
+        }
+        else{
+            lt = new ArrayList<String>();
+            lt.add(user.getUid());
+        }
+        ref.child(item.getId()).child("requested_by").setValue(lt);
+
+
         AppCompatActivity activity = (AppCompatActivity) view.getContext();
         home myFragment = new home();
         activity.getSupportFragmentManager().beginTransaction().replace(R.id.mainframe, myFragment).addToBackStack("homepage").commit();

@@ -128,9 +128,8 @@ public class AddItem extends AppCompatActivity {
     private final int PICK_IMAGE_REQUEST = 1;
     private Uri targetUri;
     public void setImg(View view) {
-        Intent intent = new Intent();
+        Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

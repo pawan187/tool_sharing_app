@@ -33,6 +33,7 @@ class CustomAdapter extends RecyclerView.Adapter <CustomAdapter.MyViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int i) {
         final notification nt = requests.get(i);
+
         myViewHolder.productname.setText(String.valueOf(nt.getProductname()));
         myViewHolder.status.setText(String.valueOf(nt.getType()));
         myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {

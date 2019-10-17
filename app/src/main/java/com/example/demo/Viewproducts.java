@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -97,8 +98,11 @@ public class Viewproducts extends Fragment {
                     requests.add(item);
 
                 }
-                recyclerView.setAdapter(new ItemAdapter(getContext(),requests));
-
+                if(requests.isEmpty()){
+                    Toast.makeText(getContext(),"You have not added any items as of yet!",Toast.LENGTH_LONG).show();
+                }else {
+                    recyclerView.setAdapter(new ItemAdapter(getContext(), requests));
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -106,13 +110,6 @@ public class Viewproducts extends Fragment {
             }
         };
         reference.orderByChild("owner_id").equalTo(user.getUid()).addValueEventListener(eventListener);
-//        requests.add(new item("1","book","https://thumbs-prod.si-cdn.com/ufPRE9RHUDHqQdOsLvYHhJAxy1k=/fit-in/1600x0/https://public-media.si-cdn.com/filer/91/91/91910c23-cae4-46f8-b7c9-e2b22b8c1710/lostbook.jpg"));
-//        requests.add(new item("2","pen","abc.com"));
-//        requests.add(new item("7","cycle","7"));
-//        requests.add(new item("8","bike","8"));
-//        Log.d("items:",String.valueOf(requests));
-//        recyclerView.setAdapter(new ItemAdapter(getContext(),requests));
-
         return view;
     }
 

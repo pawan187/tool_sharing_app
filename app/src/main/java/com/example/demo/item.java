@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import java.util.List;
+
 public class item {
     private String id;
     private  String image_title;
@@ -8,6 +10,7 @@ public class item {
     private String available;
     private  String description;
     private String pin;
+    private List<String> requested_by;
     public item( String imgtit, String imgurl, String ownid, String avail,String pin,String description){
         this.image_title = imgtit;
         this.image_url = imgurl;
@@ -16,6 +19,25 @@ public class item {
         this.pin = pin;
         this.description = description;
     }
+
+    public item( String imgtit, String imgurl, String ownid, String avail,String pin,String description,List<String> lt){
+        this.image_title = imgtit;
+        this.image_url = imgurl;
+        this.owner_id = ownid;
+        this.available = avail;
+        this.pin = pin;
+        this.description = description;
+        this.requested_by = lt;
+    }
+
+    public List<String> getRequested_by() {
+        return requested_by;
+    }
+
+    public void setRequested_by(List<String> requested_by) {
+        this.requested_by = requested_by;
+    }
+
     public item(String id, String imgtit, String imageurl){
         this.image_url = imageurl;
         this.id = id;

@@ -3,15 +3,15 @@ package com.example.demo;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,104 +23,106 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link notif.OnFragmentInteractionListener} interface
+ * {@link Search.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link notif#newInstance} factory method to
+ * Use the {@link Search#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class notif extends Fragment {
+public class Search extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    private TextView empty;
-    private OnFragmentInteractionListener mListener;
-    private DatabaseReference reference;
     private FirebaseUser User;
-    public notif() {
-        // Required empty public constructor
+    private OnFragmentInteractionListener mListener;
+    private String query;
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 
+    public String getQuery() {
+        return query;
+    }
+
+    public Search(){
+
+    }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment notif.
+     * @return A new instance of fragment Search.
      */
     // TODO: Rename and change types and number of parameters
-    public static notif newInstance(String param1, String param2) {
-        notif fragment = new notif();
+    public static Search newInstance(String param1, String param2) {
+        Search fragment = new Search();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-
+//    private TextView simple;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-            if (getArguments() != null) {
-                mParam1 = getArguments().getString(ARG_PARAM1);
-                mParam2 = getArguments().getString(ARG_PARAM2);
-            }
-        reference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://share-o-72f35.firebaseio.com/");
-
-            User = FirebaseAuth.getInstance().getCurrentUser();
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        User = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-//        notif context;
-        View view = inflater.inflate(R.layout.fragment_notif, container, false);
-        final RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        final ArrayList requests = new ArrayList<notification>();
+        return inflater.inflate(R.layout.fragment_search, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+//        simple = view.findViewById(R.id.simple);
+        final RecyclerView recyclerView = view.findViewById(R.id.my_search_recycler);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://share-o-72f35.firebaseio.com/");
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+
+        final ArrayList requests = new ArrayList<item>();
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
-                    notification nt = ds.getValue(notification.class);
-                    nt.setId(ds.getKey());
-//                    Log.i("notificaton id",nt.getId());
-                    if(nt!=null){
-                        if(User.getUid().equals(nt.getOwnerId())){
-                            requests.add(nt);
-                        }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    item item = ds.getValue(item.class);
+                    Log.d("TAG",ds.getKey()+" user id"+ User.getUid());
+                    item.setId(ds.getKey());
+                    if(!User.getUid().equals(item.getOwner_id()) && item.getPin().equals(getQuery())){
+                        requests.add(item);
                     }
                 }
-                Collections.reverse(requests);
-                if(requests.isEmpty()){
-                    Toast.makeText(getContext(),"you have no notifications to see!",Toast.LENGTH_LONG).show();
-                }
-                else {
-                    recyclerView.setAdapter(new CustomAdapter(getContext(), requests));
-                }
+
+                recyclerView.setAdapter(new ItemAdapter(getContext(),requests));
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            public void onCancelled(DatabaseError databaseError) {
+                Log.i("datat retrival","error"+ databaseError);
             }
         };
-        reference.child("notifications").addValueEventListener(eventListener);
-
-        return view;
-//        return inflater.inflate(R.layout.fragment_notif, container, false);
+        reference.child("items").addListenerForSingleValueEvent(eventListener);
+//        simple.setText("query this : "+query);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -158,5 +160,4 @@ public class notif extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
 }
